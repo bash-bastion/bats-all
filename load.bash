@@ -13,3 +13,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/src/assert_output.bash"
 source "$(dirname "${BASH_SOURCE[0]}")/src/refute_output.bash"
 source "$(dirname "${BASH_SOURCE[0]}")/src/assert_line.bash"
 source "$(dirname "${BASH_SOURCE[0]}")/src/refute_line.bash"
+
+# bats-file
+source "$(dirname "${BASH_SOURCE[0]}")/src/file.bash"
+source "$(dirname "${BASH_SOURCE[0]}")/src/temp.bash"
