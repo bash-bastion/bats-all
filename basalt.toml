@@ -7,7 +7,7 @@ description = ''
 
 [run]
 dependencies = []
-sourceDirs = ['bats-assert-src', 'bats-file-src', 'bats-support-src']
+sourceDirs = []
 builtinDirs = []
 binDirs = []
 completionDirs = []
