@@ -1,6 +1,6 @@
 # bats-common-utils
 
-This repository is an aggregation of the following repositories made for consumption by [Basalt](https://github.com/hyperupcall/basalt)
+This repository is an aggregation of the following repositories made for consumption by [Basalt](https://github.com/hyperupcall/basalt). All the repositories have been merged into one another properly (`git merge --allow-unrelated-histories`), so history was preserved
 
 - [bats-support](https://github.com/bats-core/bats-support)
 - [bats-assert](https://github.com/bats-core/bats-assert)
