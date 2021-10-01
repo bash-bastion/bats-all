@@ -1,7 +1,4 @@
-# Load dependencies.
-load "${BATS_TEST_DIRNAME}/../node_modules/bats-support/load.bash"
-
-# Load library.
+# Load library and dependencies.
 load '../load'
 
 # validate that bats-assert is safe to use under -u

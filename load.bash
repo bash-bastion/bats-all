@@ -4,9 +4,9 @@
 __bats_common_utils_dirname="$(dirname "${BASH_SOURCE[0]}")"
 
 # bats-support
-source "$__bats_common_utils_dirname/bats-support/src/output.bash"
-source "$__bats_common_utils_dirname/bats-support/src/error.bash"
-source "$__bats_common_utils_dirname/bats-support/src/lang.bash"
+source "$__bats_common_utils_dirname/bats-support-src/output.bash"
+source "$__bats_common_utils_dirname/bats-support-src/error.bash"
+source "$__bats_common_utils_dirname/bats-support-src/lang.bash"
 
 # bats-assert
 source "$__bats_common_utils_dirname/bats-assert-src/assert.bash"
