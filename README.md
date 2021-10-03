@@ -26,4 +26,4 @@ If you don't wish to use Basalt, the `load.bash` file has been modified to work 
 
 ## License
 
-Original code licensed under "CC0 1.0 Universal". Modifications licensed under "BSD 3-Clause"
+Original code is licensed under `CC0-1.0`. Modifications are licensed under `BSD-3-Clause`
