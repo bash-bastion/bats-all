@@ -23,3 +23,7 @@ If you don't wish to use Basalt, the `load.bash` file has been modified to work 
 ## Roadmap
 
 - Address issues and merge PR's from both `bats-assert` and `bats-file`
+
+## License
+
+Original code licensed under "CC0 1.0 Universal". Modifications licensed under "BSD 3-Clause"
