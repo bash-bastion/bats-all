@@ -99,7 +99,7 @@ temp_make() {
   template+='-XXXXXXXXXX'
 
   local path
-  path="$(mktemp -d  --  "${BATS_TMPDIR}/${template}" 2>&1)"
+  path="$(mktemp -d -- "${BATS_TMPDIR}/${template}" 2>&1)"
   if (( $? )); then
     echo "$path" \
       | batslib_decorate 'ERROR: temp_make' \
@@ -163,7 +163,9 @@ temp_del() {
       return $?
     fi
 
-    (( BATS_TEST_COMPLETED != 1 )) && return 0
+    if (( BATS_TEST_COMPLETED != 1 )); then
+      return 0
+    fi
   fi
 
   # Delete directory.
