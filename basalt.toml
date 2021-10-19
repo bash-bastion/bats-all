@@ -1,6 +1,6 @@
 [package]
-name = 'bats-common-utils'
-slug = 'bats-common-utils'
+name = 'bats-alls'
+slug = 'bats-alls'
 version = '3.0.1'
 authors = ['Edwin Kofler <edwin@kofler.dev>']
 description = ''
