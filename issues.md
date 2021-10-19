@@ -16,7 +16,7 @@
 ## Done
 
 - https://github.com/bats-core/bats-assert/pull/30 (allow negative indexes in line assertions)
-- https://github.com/bats-core/bats-assert/issues/31 (allow indexing with negative numbers)
+- https://github.com/bats-core/bats-assert/issues/31 (add assert_not_equal)
 
 ## Considering
 
