@@ -20,6 +20,12 @@ If you are using Basalt, you need to source this project manually (`basalt.load 
 
 Of course, you don't have to use Basalt; cloning the tree with `git-submodule(1)` works fine, of course
 
+## Merged Changes
+
+All changes are merged in [hyperupcall/bats-support](https://github.com/hyperupcall/bats-support), [hyperupcall/bats-assert](https://github.com/hyperupcall/bats-assert), and [hyperupcall/bats-file](https://github.com/hyperupcall/bats-file). Then, those changes eventually appear here
+
+All tracked changes are in [./issues.md](./issues.md). Right now, at least two changes have been integrated
+
 ## License
 
 Original code is licensed under `CC0-1.0`. Modifications are licensed under `BSD-3-Clause`
