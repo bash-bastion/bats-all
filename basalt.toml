@@ -3,18 +3,4 @@ name = 'bats-all'
 slug = 'bats_all'
 version = '4.2.0'
 authors = ['Edwin Kofler <edwin@kofler.dev>']
-description = ''
-
-[run]
-dependencies = []
-sourceDirs = []
-builtinDirs = []
-binDirs = []
-completionDirs = []
-manDirs = []
-
-[run.shellEnvironment]
-
-[run.setOptions]
-
-[run.shoptOptions]
+description = 'An aggregation of the three most popular Bats libraries'
