@@ -38,6 +38,7 @@ This project provides the following functions:
  - [assert_success](#assert_success) / [assert_failure](#assert_failure) Assert exit status is `0` or `1`.
  - [assert_output](#assert_output) / [refute_output](#refute_output) Assert output does (or does not) contain given content.
  - [assert_line](#assert_line) / [refute_line](#refute_line) Assert a specific line of output does (or does not) contain given content.
+ - [assert_regex](#assert_regex) / [refute_regex](#refute_regex) Assert a parameter does (or does not) match given pattern.
 
 These commands are described in more detail below.
 
@@ -692,6 +693,85 @@ An error is displayed if the specified extended regular expression is invalid.
 
 This option and partial matching (`--partial` or `-p`) are mutually exclusive.
 An error is displayed when used simultaneously.
+
+### `assert_regex`
+
+This function is similar to `assert_equal` but uses pattern matching instead of
+equality, by wrapping `[[ value =~ pattern ]]`.
+
+Fail if the value (first parameter) does not match the pattern (second
+parameter).
+
+```bash
+@test 'assert_regex()' {
+  assert_regex 'what' 'x$'
+}
+```
+
+On failure, the value and the pattern are displayed.
+
+```
+-- values does not match regular expression --
+value    : what
+pattern  : x$
+--
+```
+
+If the value is longer than one line then it is displayed in *multi-line*
+format.
+
+An error is displayed if the specified extended regular expression is invalid.
+
+For description of the matching behavior, refer to the documentation of the
+`=~` operator in the
+[Bash manual]: https://www.gnu.org/software/bash/manual/html_node/Conditional-Constructs.html.
+Note that the `BASH_REMATCH` array is available immediately after the
+assertion succeeds but is fragile, i.e. prone to being overwritten as a side
+effect of other actions.
+
+### `refute_regex`
+
+This function is similar to `refute_equal` but uses pattern matching instead of
+equality, by wrapping `! [[ value =~ pattern ]]`.
+
+Fail if the value (first parameter) matches the pattern (second parameter).
+
+```bash
+@test 'refute_regex()' {
+  refute_regex 'WhatsApp' 'Threema'
+}
+```
+
+On failure, the value, the pattern and the match are displayed.
+
+```
+@test 'refute_regex()' {
+  refute_regex 'WhatsApp' 'What.'
+}
+
+-- value matches regular expression --
+value    : WhatsApp
+pattern  : What.
+match    : Whats
+case     : sensitive
+--
+```
+
+If the value or pattern is longer than one line then it is displayed in
+*multi-line* format.
+
+An error is displayed if the specified extended regular expression is invalid.
+
+For description of the matching behavior, refer to the documentation of the
+`=~` operator in the
+[Bash manual]: https://www.gnu.org/software/bash/manual/html_node/Conditional-Constructs.html.
+
+Note that the `BASH_REMATCH` array is available immediately after the assertion
+fails but is fragile, i.e. prone to being overwritten as a side effect of other
+actions like calling `run`. Thus, it's good practice to avoid using
+`BASH_REMATCH` in conjunction with `refute_regex()`. The valuable information
+the array contains is the matching part of the value which is printed in the
+failing test log, as mentioned above.
 
 <!-- REFERENCES -->
 
