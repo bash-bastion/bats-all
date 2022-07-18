@@ -1,7 +1,7 @@
 # shellcheck shell=bash
 # shellcheck disable=SC1091
 
-__bats_common_utils_dir="$(dirname "${BASH_SOURCE[0]}")"
+__bats_common_utils_dir=$(dirname "${BASH_SOURCE[0]}")
 
 # bats-assert
 source "$__bats_common_utils_dir/bats-assert/src/assert.bash"
@@ -24,4 +24,4 @@ source "$__bats_common_utils_dir/bats-support/src/output.bash"
 source "$__bats_common_utils_dir/bats-support/src/error.bash"
 source "$__bats_common_utils_dir/bats-support/src/lang.bash"
 
-unset __bats_common_utils_dir
+unset -v __bats_common_utils_dir
