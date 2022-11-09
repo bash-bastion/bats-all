@@ -10,8 +10,6 @@ The three repositories are managed with `git-subtree(1)`. Each subtree points to
 - [hyperupcall/bats-assert](https://github.com/hyperupcall/bats-assert) from [bats-core/bats-assert](https://github.com/bats-core/bats-assert)
 - [hyperupcall/bats-file](https://github.com/hyperupcall/bats-file) from [bats-core/bats-file](https://github.com/bats-core/bats-file)
 
-All tracked changes are in [./issues.md](./issues.md). Right now, at least two changes have been integrated
-
 ## Installation
 
 Use [Basalt](https://github.com/hyperupcall/basalt), a Bash package manager, to add this project as a dependency
