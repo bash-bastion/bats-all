@@ -1,6 +1,6 @@
 {
 	"name": "@hyperupcall/bats-all",
-	"version": "5.1.0",
+	"version": "5.1.1",
 	"description": "Magic per-project shell environments",
 	"author": "Edwin Kofler <edwin@kofler.dev> (https://edwinkofler.com)",
 	"license": "CC0-1.0 AND BSD-3-Clause",

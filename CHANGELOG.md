@@ -1,5 +1,9 @@
 # Changelog
 
+## v5.1.1
+
+- Improve installation instructions in `README.md`
+
 ## v5.1.0
 
 ### Features
