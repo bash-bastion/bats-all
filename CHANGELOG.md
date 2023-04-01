@@ -1,5 +1,15 @@
 # Changelog
 
+## v5.1.0
+
+## Features
+
+- Add `package.json` with package name `@hyperupcall/bats-all`
+
+## Fixes
+
+- The `{assert,refute}_regex` files from `bats-assert` are now properly `source`'d
+
 ## v5.0.0
 
 ### Breaking Changes
