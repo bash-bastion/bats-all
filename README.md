@@ -26,7 +26,7 @@ Use [Basalt](https://github.com/hyperupcall/basalt), a Bash package manager, to 
 basalt add hyperupcall/bats-all
 ```
 
-If you are using Basalt, you need to source this project manually (`basalt.load 'github.com/hyperupcall/bats-alls' 'load.bash'`) within your tests. Entries are not added to this projects' `sourceDirs` because that would mean this library would be sourced, even when not testing
+You need to source this project manually (`basalt.load 'github.com/hyperupcall/bats-alls' 'load.bash'`) within your tests. Entries are not added to this projects' `sourceDirs` because that would mean this library would be sourced, even when not testing
 
 ### With Git
 
