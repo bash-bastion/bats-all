@@ -4,11 +4,11 @@ An aggregation of the three most popular [Bats](https://github.com/bats-core/bat
 
 ## Summary
 
-The three repositories are managed with `git-subtree(1)`. Each subtree points to my fork of each respective project. This is done so I can add features a bit easier. My forks and their corresponding upstream repositories are the following:
+The three repositories are managed with `git-subtree(1)`. They are the following:
 
-- [hyperupcall/bats-support](https://github.com/hyperupcall/bats-support) from [bats-core/bats-support](https://github.com/bats-core/bats-support)
-- [hyperupcall/bats-assert](https://github.com/hyperupcall/bats-assert) from [bats-core/bats-assert](https://github.com/bats-core/bats-assert)
-- [hyperupcall/bats-file](https://github.com/hyperupcall/bats-file) from [bats-core/bats-file](https://github.com/bats-core/bats-file)
+- [bats-core/bats-support](https://github.com/bats-core/bats-support)
+- [bats-core/bats-assert](https://github.com/bats-core/bats-assert)
+- [bats-core/bats-file](https://github.com/bats-core/bats-file)
 
 ## Installation
 
