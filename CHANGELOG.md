@@ -1,5 +1,11 @@
 # Changelog
 
+## v5.2.0
+
+- Merge latest `bats-core/bats-assert` into `./bats-assert`
+- Merge latest `bats-core/bats-file` into `./bats-file`
+- Merge latest `bats-core/bats-support` into `./bats-support`
+
 ## v5.1.1
 
 - Improve installation instructions in `README.md`

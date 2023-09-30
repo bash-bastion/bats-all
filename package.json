@@ -1,6 +1,6 @@
 {
 	"name": "@hyperupcall/bats-all",
-	"version": "5.1.1",
+	"version": "5.2.0",
 	"description": "Aggregation of the three most popular Bats utility libraries",
 	"author": "Edwin Kofler <edwin@kofler.dev> (https://edwinkofler.com)",
 	"license": "CC0-1.0 AND BSD-3-Clause",
