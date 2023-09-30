@@ -258,28 +258,13 @@ assert_file_executable() {
 assert_files_equal() {
   local -r file1="$1"
   local -r file2="$2"
-  if ! cmp -s "$file1" "$file2" >/dev/null ; then
+  if ! `cmp -s "$file1" "$file2"` ; then
     local -r rem="${BATSLIB_FILE_PATH_REM-}"
     local -r add="${BATSLIB_FILE_PATH_ADD-}"
     batslib_print_kv_single 4 'path' "${file1/$rem/$add}" 'path' "${file2/$rem/$add}" \
       | batslib_decorate 'files are not the same' \
       | fail
   fi
-}
-
-# Get the owner of a file
-# Arguments:
-# $1 - output variable name
-# $2 - path to file
-_bats_get_file_owner() {
-  local -r output_var=$1
-  local -r file=$2
-  if [[ "$OSTYPE" == darwin* ]]; then
-      local -ra cmd_params=(-f %Su)
-  else
-      local -ra cmd_params=(-c %U)
-  fi
-  printf -v "$output_var" "%s" "$(stat "${cmd_params[@]}" "$file")"
 }
 
 # Fail and display path of the user is not the owner of a file. This
@@ -298,12 +283,14 @@ _bats_get_file_owner() {
 assert_file_owner() {
   local -r owner="$1"
   local -r file="$2"
-  
-  local actual_owner
-  _bats_get_file_owner actual_owner "$file"
-  readonly actual_owner
+  if [[ "$(uname)" == "Darwin" ]]; then
+    __cmd_param="-f %Su"
+  elif [[ "$(uname)" == "Linux" ]]; then
+    __cmd_param="-c %U"
+  fi
+  __o=$(stat $__cmd_param "$file")
 
-  if [[ "$actual_owner" != "$owner" ]]; then
+  if [[ "$__o" != "$owner" ]]; then
     local -r rem="${BATSLIB_FILE_PATH_REM-}"
     local -r add="${BATSLIB_FILE_PATH_ADD-}"
     batslib_print_kv_single 4 'path' "${file/$rem/$add}" \
@@ -329,20 +316,24 @@ assert_file_owner() {
 assert_file_permission() {
   local -r permission="$1"
   local -r file="$2"
-
-  if [[ "$OSTYPE" == darwin* ]]; then
-      local -r actual_permission=$(stat -f '%A' "$file")
-  else
-      local -r actual_permission=$(stat -c "%a" "$file")
-  fi
-
-  if [[ "$actual_permission" != "$permission" ]]; then
+  if [[ `uname` == "Darwin" ]]; then
+  if [ `stat -f '%A' "$file"` -ne "$permission" ]; then
     local -r rem="${BATSLIB_FILE_PATH_REM-}"
     local -r add="${BATSLIB_FILE_PATH_ADD-}"
     batslib_print_kv_single 4 'path' "${file/$rem/$add}" \
       | batslib_decorate "file does not have permissions $permission" \
       | fail
   fi
+  elif [[ `uname` == "Linux" ]]; then
+  if [ `stat -c "%a" "$file"` -ne "$permission" ]; then
+    local -r rem="${BATSLIB_FILE_PATH_REM-}"
+    local -r add="${BATSLIB_FILE_PATH_ADD-}"
+    batslib_print_kv_single 4 'path' "${file/$rem/$add}" \
+      | batslib_decorate "file does not have permissions $permission" \
+      | fail
+  fi
+
+fi
 }
 
 # Fail if file is not zero byte. This
@@ -360,14 +351,25 @@ assert_file_permission() {
 #   STDERR - details, on failure
 assert_size_zero() {
   local -r file="$1"
-
-  if [ -s "$file" ]; then
+    if [[ `uname` == "Darwin" ]]; then
+    mkfile 2k ${TEST_FIXTURE_ROOT}/dir/notzerobyte
+    if [ -s "$file" ]; then
     local -r rem="${BATSLIB_FILE_PATH_REM-}"
     local -r add="${BATSLIB_FILE_PATH_ADD-}"
     batslib_print_kv_single 4 'path' "${file/$rem/$add}" \
       | batslib_decorate 'file is greater than 0 byte' \
       | fail
   fi
+    elif [[ `uname` == "Linux" ]]; then
+    fallocate -l 2k ${TEST_FIXTURE_ROOT}/dir/notzerobyte
+    if [ -s "$file" ]; then
+    local -r rem="${BATSLIB_FILE_PATH_REM-}"
+    local -r add="${BATSLIB_FILE_PATH_ADD-}"
+    batslib_print_kv_single 4 'path' "${file/$rem/$add}" \
+      | batslib_decorate 'file is greater than 0 byte' \
+      | fail
+  fi
+fi
 }
 
 # Fail if group if is not set on file. This
@@ -442,24 +444,6 @@ assert_sticky_bit() {
   fi
 }
 
-_bats_file_readlinkf_macos() {
-  local TARGET_FILE=$1
-  cd "$(dirname "$TARGET_FILE")" 2>/dev/null || return
-  TARGET_FILE=$(basename "$TARGET_FILE")
-  # Iterate down a (possible) chain of symlinks
-  while [ -L "$TARGET_FILE" ]
-  do
-    TARGET_FILE=$(readlink "$TARGET_FILE")
-    cd "$(dirname "$TARGET_FILE")" 2>/dev/null || return
-    TARGET_FILE=$(basename "$TARGET_FILE")
-  done
-  # Compute the canonicalized name by finding the physical path
-  # for the directory we're in and appending the target file.
-  local -r PHYS_DIR=$(pwd -P)
-
-  printf "%s/%s\n" "$PHYS_DIR" "$TARGET_FILE"
-}
-
 # Fail and display path of the file (or directory) if it is not a symlink to given destination.
 # function is the logical complement of `assert_not_symlink_to`
 #   $1 - source
@@ -472,30 +456,58 @@ _bats_file_readlinkf_macos() {
 assert_symlink_to() {
   local -r sourcefile="$1"
   local -r link="$2"
+  # If OS is linux
+  if [[ `uname` == "Linux" ]]; then
+    if [ ! -L $link   ]; then
+      local -r rem="${BATSLIB_FILE_PATH_REM-}"
+      local -r add="${BATSLIB_FILE_PATH_ADD-}"
+      batslib_print_kv_single 4 'path' "${link/$rem/$add}" \
+        | batslib_decorate 'file is not a symbolic link' \
+        | fail
+    fi
+    local -r realsource=$( readlink -f "$link" )
+    if [ ! "$realsource" = "$sourcefile"  ]; then
+      local -r rem="${BATSLIB_FILE_PATH_REM-}"
+      local -r add="${BATSLIB_FILE_PATH_ADD-}"
+      batslib_print_kv_single 4 'path' "${link/$rem/$add}" \
+        | batslib_decorate 'symbolic link does not have the correct target' \
+        | fail
+    fi
+  # If OS is OSX
+  elif [[ `uname` == "Darwin" ]]; then
+    function readlinkf() {
+    TARGET_FILE=$1
+    cd `dirname $TARGET_FILE`
+    TARGET_FILE=`basename $TARGET_FILE`
+    # Iterate down a (possible) chain of symlinks
+    while [ -L "$TARGET_FILE" ]
+    do
+      TARGET_FILE=`readlink $TARGET_FILE`
+      cd `dirname $TARGET_FILE`
+      TARGET_FILE=`basename $TARGET_FILE`
+    done
+    # Compute the canonicalized name by finding the physical path
+    # for the directory we're in and appending the target file.
+    PHYS_DIR=`pwd -P`
+    RESULT=$PHYS_DIR/$TARGET_FILE
+    echo $RESULT
+  }
 
-  # If OS is OSX, emulate readlink -f
-  if [[ $OSTYPE == "darwin"* ]]; then
-    local -ra readlink_command=(_bats_file_readlinkf_macos)
-  else
-    local -ra readlink_command=(readlink -f)
-  fi
-  
-  if [ ! -L "$link"   ]; then
+  if [ ! -L $link   ]; then
     local -r rem="${BATSLIB_FILE_PATH_REM-}"
     local -r add="${BATSLIB_FILE_PATH_ADD-}"
     batslib_print_kv_single 4 'path' "${link/$rem/$add}" \
       | batslib_decorate 'file is not a symbolic link' \
       | fail
-  fi
-
-  local realsource; realsource=$( "${readlink_command[@]}" "$link" ); readonly realsource
-  local realexpectedsource; realexpectedsource=$( "${readlink_command[@]}" "$sourcefile" ); readonly realexpectedsource
-  if [ ! "${realsource}" = "${realexpectedsource}"  ]; then
-    local -r rem="${BATSLIB_FILE_PATH_REM-}"
-    local -r add="${BATSLIB_FILE_PATH_ADD-}"
-    batslib_print_kv_single 4 'path' "${link/$rem/$add}" \
+    fi
+    local -r realsource=$( readlinkf "$link" )
+    if [ ! "$realsource" = "$sourcefile"  ]; then
+      local -r rem="${BATSLIB_FILE_PATH_REM-}"
+      local -r add="${BATSLIB_FILE_PATH_ADD-}"
+      batslib_print_kv_single 4 'path' "${link/$rem/$add}" \
       | batslib_decorate 'symbolic link does not have the correct target' \
       | fail
+    fi
   fi
 }
 # Fail and display path of the file (or directory) if it does not match a size.
@@ -543,7 +555,7 @@ assert_file_contains() {
   if ! grep -q "$regex" "$file"; then
     local -r rem="${BATSLIB_FILE_PATH_REM-}"
     local -r add="${BATSLIB_FILE_PATH_ADD-}"
-    batslib_print_kv_single 4 'path' "${file/$rem/$add}" 'regex' "$regex" \
+    batslib_print_kv_single 4 'path' "${file/$rem/$add}" \
       | batslib_decorate 'file does not contain regex' \
       | fail
   fi
@@ -569,7 +581,7 @@ assert_file_empty() {
     { local -ir width=8
       batslib_print_kv_single "$width" 'path' "${file/$rem/$add}"
       batslib_print_kv_single_or_multi "$width" \
-          'output' "$(cat "$file")"
+          'output' "$(cat $file)"
     } | batslib_decorate 'file is not empty' \
       | fail
   fi
@@ -804,20 +816,29 @@ assert_file_not_executable() {
 # Outputs:
 #   STDERR - details, on failure
 assert_not_file_owner() {
-  local -r expected_owner="$1"
+  local -r owner="$1"
   local -r file="$2"
-
-  local actual_owner
-  _bats_get_file_owner actual_owner "$file"
-  readonly actual_owner
-
-  if [[ "$actual_owner" == "$expected_owner" ]]; then
+  if [[ `uname` == "Darwin" ]]; then
+  sudo chown root ${TEST_FIXTURE_ROOT}/dir/owner
+  sudo chown daemon ${TEST_FIXTURE_ROOT}/dir/notowner
+  if [ `stat -f '%Su' "$file"` = "$owner" ]; then
     local -r rem="${BATSLIB_FILE_PATH_REM-}"
     local -r add="${BATSLIB_FILE_PATH_ADD-}"
     batslib_print_kv_single 4 'path' "${file/$rem/$add}" \
-      | batslib_decorate "user $expected_owner is the owner of the file, but it was expected not to be" \
+      | batslib_decorate "given user is the $owner, but it was expected not to be" \
       | fail
   fi
+  elif [[ `uname` == "Linux" ]]; then
+  sudo chown root ${TEST_FIXTURE_ROOT}/dir/owner
+  sudo chown daemon ${TEST_FIXTURE_ROOT}/dir/notowner
+    if [ `stat -c "%U" "$file"` = "$owner" ]; then
+    local -r rem="${BATSLIB_FILE_PATH_REM-}"
+    local -r add="${BATSLIB_FILE_PATH_ADD-}"
+    batslib_print_kv_single 4 'path' "${file/$rem/$add}" \
+      | batslib_decorate "given user is the $owner, but it was expected not to be" \
+      | fail
+  fi
+fi
 }
 
 # Fail if the file has given permissions. This
@@ -836,20 +857,24 @@ assert_not_file_owner() {
 assert_not_file_permission() {
   local -r permission="$1"
   local -r file="$2"
-
-  if [[ "$OSTYPE" == darwin* ]]; then
-      local -r actual_permission=$(stat -f '%A' "$file")
-  else
-      local -r actual_permission=$(stat -c "%a" "$file")
-  fi
-
-  if [ "$actual_permission" -eq "$permission" ]; then
+  if [[ `uname` == "Darwin" ]]; then
+    if [ `stat -f '%A' "$file"` -eq "$permission" ]; then
     local -r rem="${BATSLIB_FILE_PATH_REM-}"
     local -r add="${BATSLIB_FILE_PATH_ADD-}"
     batslib_print_kv_single 4 'path' "${file/$rem/$add}" \
       | batslib_decorate "file has permissions $permission, but it was expected not to have" \
       | fail
   fi
+  elif [[ `uname` == "Linux" ]]; then
+        if [ `stat -c "%a" "$file"` -eq "$permission" ]; then
+    local -r rem="${BATSLIB_FILE_PATH_REM-}"
+    local -r add="${BATSLIB_FILE_PATH_ADD-}"
+    batslib_print_kv_single 4 'path' "${file/$rem/$add}" \
+      | batslib_decorate "file has permissions $permission, but it was expected not to have" \
+      | fail
+    fi
+  fi
+
 }
 
 # This function is the logical complement of `assert_files_equal'.
@@ -863,7 +888,7 @@ assert_not_file_permission() {
 assert_files_not_equal() {
   local -r file1="$1"
   local -r file2="$2"
-  if cmp -s "$file1" "$file2" >/dev/null ; then
+  if `cmp -s "$file1" "$file2"` ; then
     local -r rem="${BATSLIB_FILE_PATH_REM-}"
     local -r add="${BATSLIB_FILE_PATH_ADD-}"
     batslib_print_kv_single 4 'path' "${file1/$rem/$add}" 'path' "${file2/$rem/$add}" \
@@ -887,6 +912,8 @@ assert_files_not_equal() {
 #   STDERR - details, on failure
 assert_size_not_zero() {
   local -r file="$1"
+  if [[ `uname` == "Darwin" ]]; then
+  mkfile 2k ${TEST_FIXTURE_ROOT}/dir/notzerobyte
   if [[ ! -s "$file" ]]; then
     local -r rem="${BATSLIB_FILE_PATH_REM-}"
     local -r add="${BATSLIB_FILE_PATH_ADD-}"
@@ -894,6 +921,16 @@ assert_size_not_zero() {
       | batslib_decorate 'file is 0 byte, but it was expected not to be' \
       | fail
   fi
+  elif [[ `uname` == "Linux" ]]; then
+  fallocate -l 2k ${TEST_FIXTURE_ROOT}/dir/notzerobyte
+  if [[ ! -s "$file" ]]; then
+    local -r rem="${BATSLIB_FILE_PATH_REM-}"
+    local -r add="${BATSLIB_FILE_PATH_ADD-}"
+    batslib_print_kv_single 4 'path' "${file/$rem/$add}" \
+      | batslib_decorate 'file is 0 byte, but it was expected not to be' \
+      | fail
+  fi
+fi
 }
 
 
@@ -982,27 +1019,54 @@ assert_no_sticky_bit() {
 assert_not_symlink_to() {
   local -r sourcefile="$1"
   local -r link="$2"
-  
-  
-  if [[ $OSTYPE == darwin* ]]; then
-    local -ra readlink_command=(_bats_file_readlinkf_macos)
-  else
-    local -ra readlink_command=(readlink -f)
-  fi
-  
-  if [ -L "$link"   ]; then
+  # If OS is linux
+  if [[ `uname` == "Linux" ]]; then
+    if [ -L $link   ]; then
+      local -r rem="${BATSLIB_FILE_PATH_REM-}"
+      local -r add="${BATSLIB_FILE_PATH_ADD-}"
+      batslib_print_kv_single 4 'path' "${link/$rem/$add}" \
+        | batslib_decorate 'file is a symbolic link' \
+        | fail
+    fi
+    local -r realsource=$( readlink -f "$link" )
+    if [ "$realsource" = "$sourcefile"  ]; then
+      batslib_print_kv_single 4 'path' "${link/$rem/$add}" \
+        | batslib_decorate 'symbolic link does have the correct target' \
+        | fail
+    fi
+  # If OS is OSX
+  elif [[ `uname` == "Darwin" ]]; then
+  function readlinkf() {
+    TARGET_FILE=$1
+    cd `dirname $TARGET_FILE`
+    TARGET_FILE=`basename $TARGET_FILE`
+    # Iterate down a (possible) chain of symlinks
+    while [ -L "$TARGET_FILE" ]
+    do
+      TARGET_FILE=`readlink $TARGET_FILE`
+      cd `dirname $TARGET_FILE`
+      TARGET_FILE=`basename $TARGET_FILE`
+    done
+    # Compute the canonicalized name by finding the physical path
+    # for the directory we're in and appending the target file.
+    PHYS_DIR=`pwd -P`
+    RESULT=$PHYS_DIR/$TARGET_FILE
+    echo $RESULT
+  }
+
+  if [ -L $link   ]; then
     local -r rem="${BATSLIB_FILE_PATH_REM-}"
     local -r add="${BATSLIB_FILE_PATH_ADD-}"
     batslib_print_kv_single 4 'path' "${link/$rem/$add}" \
       | batslib_decorate 'file is a symbolic link' \
       | fail
-  fi
-
-  local -r realsource=$( "${readlink_command[@]}" "$link" )
-  if [ "$realsource" = "$sourcefile"  ]; then
-    batslib_print_kv_single 4 'path' "${link/$rem/$add}" \
-      | batslib_decorate 'symbolic link does have the correct target' \
-      | fail
+    fi
+    local -r realsource=$( readlinkf "$link" )
+    if [ "$realsource" = "$sourcefile"  ]; then
+      batslib_print_kv_single 4 'path' "${link/$rem/$add}" \
+        | batslib_decorate 'symbolic link does have the correct target' \
+        | fail
+    fi
   fi
 }
 # Fail and display path of the file (or directory) if it is empty. This

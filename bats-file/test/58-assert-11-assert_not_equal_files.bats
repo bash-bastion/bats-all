@@ -39,8 +39,7 @@ teardown () {
   run assert_files_not_equal "$file1" "$file2"
   [ "$status" -eq 0 ]
   [ "${#lines[@]}" -eq 1 ]
-  REGEX="cmp: ${TEST_FIXTURE_ROOT}/dir: (Is a directory|I/O error)"
-  [[ "${lines[0]}" =~ $REGEX ]] || false
+  [ "${lines[0]}" == "cmp: ${TEST_FIXTURE_ROOT}/dir: Is a directory" ]
 }
 
 @test 'assert_files_not_equal() <file>: replace prefix of displayed path' {

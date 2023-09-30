@@ -3,7 +3,7 @@ load 'test_helper'
 fixtures 'exist'
 
 setup () {
-  bats_sudo mknod ${TEST_FIXTURE_ROOT}/dir/blockfile b 89 1
+ sudo mknod ${TEST_FIXTURE_ROOT}/dir/blockfile b 89 1
 }
 teardown () {
     rm -f ${TEST_FIXTURE_ROOT}/dir/blockfile

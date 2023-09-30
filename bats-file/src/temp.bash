@@ -98,10 +98,11 @@ temp_make() {
   local template="$prefix"
   template+="${BATS_TEST_FILENAME##*/}"
   template+="-${BATS_TEST_NUMBER}"
-  template+='-XXXXXX'
+  template+='-XXXXXXXXXX'
 
   local path
-  if ! path="$(mktemp -d  --  "${BATS_TMPDIR}/${template}" 2>&1)"; then
+  path="$(mktemp -d  --  "${BATS_TMPDIR}/${template}" 2>&1)"
+  if (( $? )); then
     echo "$path" \
       | batslib_decorate 'ERROR: temp_make' \
       | fail
@@ -171,7 +172,8 @@ temp_del() {
 
   # Delete directory.
   local result
-  if ! result="$(rm -r -- "$path" 2>&1 >/dev/null )"; then
+  result="$(rm -r -- "$path" 2>&1 </dev/null)"
+  if (( $? )); then
     echo "$result" \
       | batslib_decorate 'ERROR: temp_del' \
       | fail
