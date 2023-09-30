@@ -1,3 +1,7 @@
+> ⚠️ _Warning_ This repository used to be included in [hyperupcall/bats-all](https://github.com/hyperupcall/bats-all),
+> but that repository now _directly_ adds upstream bats-core repositories. Usage of this repository is deprecated.
+> Expect this repository to be either removed or moved to my [fox-archives](https://github.com/fox-archives) organization.
+
 # bats-assert
 
 [![License](https://img.shields.io/npm/l/bats-assert.svg)](https://github.com/bats-core/bats-assert/blob/master/LICENSE)
@@ -63,9 +67,9 @@ refute_line -- '--'
 
 Fail if the given expression evaluates to false.
 
-> _**Note**:
-> The expression must be a simple command.
-> [Compound commands][bash-comp-cmd], such as `[[`, can be used only when executed with `bash -c`._
+***Note:***
+*The expression must be a simple command.
+[Compound commands][bash-comp-cmd], such as `[[`, can be used only when executed with `bash -c`.*
 
 ```bash
 @test 'assert()' {
@@ -86,9 +90,9 @@ expression : [ 1 -lt 0 ]
 
 Fail if the given expression evaluates to true.
 
-> _**Note**
-> The expression must be a simple command.
-> [Compound commands][bash-comp-cmd], such as `[[`, can be used only when executed with `bash -c`._
+***Note:***
+*The expression must be a simple command.
+[Compound commands][bash-comp-cmd], such as `[[`, can be used only when executed with `bash -c`.*
 
 ```bash
 @test 'refute()' {
@@ -294,8 +298,7 @@ An error is displayed when used simultaneously.
 Regular expression matching can be enabled with the `--regexp` option (`-e` for short).
 When used, the assertion fails if the *extended regular expression* does not match `$output`.
 
-> _**Note**:
-> The anchors `^` and `$` bind to the beginning and the end of the entire output (not individual lines), respectively._
+*Note: The anchors `^` and `$` bind to the beginning and the end of the entire output (not individual lines), respectively.*
 
 ```bash
 @test 'assert_output() regular expression matching' {
@@ -411,8 +414,7 @@ An error is displayed when used simultaneously.
 Regular expression matching can be enabled with the `--regexp` option (`-e` for short).
 When used, the assertion fails if the *extended regular expression* matches `$output`.
 
-> _**Note**:
-> The anchors `^` and `$` bind to the beginning and the end of the entire output (not individual lines), respectively._
+*Note: The anchors `^` and `$` bind to the beginning and the end of the entire output (not individual lines), respectively.*
 
 ```bash
 @test 'refute_output() regular expression matching' {
@@ -459,9 +461,8 @@ It checks that the expected line appears in the output (default) or in a specifi
 Matching can be literal (default), partial or regular expression.
 This function is the logical complement of `refute_line`.
 
-> _**Warning**:
-> Due to a [bug in Bats][bats-93], empty lines are discarded from `${lines[@]}`,
-> causing line indices to change and preventing testing for empty lines._
+***Warning:***
+*Due to a [bug in Bats][bats-93], empty lines are discarded from `${lines[@]}`, causing line indices to change and preventing testing for empty lines.*
 
 [bats-93]: https://github.com/sstephenson/bats/pull/93
 
@@ -479,9 +480,9 @@ The assertion fails if the expected line is not found in `${lines[@]}`.
 
 On failure, the expected line and the output are displayed.
 
-> _**Warning**:
-> The output displayed does not contain empty lines.
-> See the Warning above for more._
+***Warning:***
+*The output displayed does not contain empty lines.
+See the Warning above for more.*
 
 ```
 -- output does not contain line --
@@ -549,8 +550,7 @@ An error is displayed when used simultaneously.
 Regular expression matching can be enabled with the `--regexp` option (`-e` for short).
 When used, a match fails if the *extended regular expression* does not match the line being tested.
 
-> _**Note**: 
-> As expected, the anchors `^` and `$` bind to the beginning and the end of the matched line, respectively._
+*Note: As expected, the anchors `^` and `$` bind to the beginning and the end of the matched line, respectively.*
 
 ```bash
 @test 'assert_line() regular expression matching' {
@@ -582,9 +582,8 @@ It checks that the unexpected line does not appear in the output (default) or in
 Matching can be literal (default), partial or regular expression.
 This function is the logical complement of `assert_line`.
 
-> _**Warning**:
-> Due to a [bug in Bats][bats-93], empty lines are discarded from `${lines[@]}`, 
-> causing line indices to change and preventing testing for empty lines._
+***Warning:***
+*Due to a [bug in Bats][bats-93], empty lines are discarded from `${lines[@]}`, causing line indices to change and preventing testing for empty lines.*
 
 [bats-93]: https://github.com/sstephenson/bats/pull/93
 
@@ -602,9 +601,9 @@ The assertion fails if the unexpected line is found in `${lines[@]}`.
 
 On failure, the unexpected line, the index of its first match and the output with the matching line highlighted are displayed.
 
-> _**Warning**:
-> The output displayed does not contain empty lines.
-> See the Warning above for more._
+***Warning:***
+*The output displayed does not contain empty lines.
+See the Warning above for more.*
 
 ```
 -- line should not be in output --
@@ -674,8 +673,7 @@ An error is displayed when used simultaneously.
 Regular expression matching can be enabled with the `--regexp` option (`-e` for short).
 When used, a match fails if the *extended regular expression* matches the line being tested.
 
-> _**Note**:
-> As expected, the anchors `^` and `$` bind to the beginning and the end of the matched line, respectively._
+*Note: As expected, the anchors `^` and `$` bind to the beginning and the end of the matched line, respectively.*
 
 ```bash
 @test 'refute_line() regular expression matching' {
@@ -729,11 +727,11 @@ format.
 An error is displayed if the specified extended regular expression is invalid.
 
 For description of the matching behavior, refer to the documentation of the
-`=~` operator in the [Bash manual][bash-conditional].
-
-> _**Note**:
-> the `BASH_REMATCH` array is available immediately after the assertion succeeds but is fragile;
-> i.e. prone to being overwritten as a side effect of other actions._
+`=~` operator in the
+[Bash manual]: https://www.gnu.org/software/bash/manual/html_node/Conditional-Constructs.html.
+Note that the `BASH_REMATCH` array is available immediately after the
+assertion succeeds but is fragile, i.e. prone to being overwritten as a side
+effect of other actions.
 
 ### `refute_regex`
 
@@ -769,20 +767,20 @@ If the value or pattern is longer than one line then it is displayed in
 An error is displayed if the specified extended regular expression is invalid.
 
 For description of the matching behavior, refer to the documentation of the
-`=~` operator in the [Bash manual][bash-conditional].
+`=~` operator in the
+[Bash manual]: https://www.gnu.org/software/bash/manual/html_node/Conditional-Constructs.html.
 
-> _**Note**:
-> the `BASH_REMATCH` array is available immediately after the assertion fails but is fragile;
-> i.e. prone to being overwritten as a side effect of other actions like calling `run`.
-> Thus, it's good practice to avoid using `BASH_REMATCH` in conjunction with `refute_regex()`.
-> The valuable information the array contains is the matching part of the value which is printed in the failing test log, as mentioned above._
+Note that the `BASH_REMATCH` array is available immediately after the assertion
+fails but is fragile, i.e. prone to being overwritten as a side effect of other
+actions like calling `run`. Thus, it's good practice to avoid using
+`BASH_REMATCH` in conjunction with `refute_regex()`. The valuable information
+the array contains is the matching part of the value which is printed in the
+failing test log, as mentioned above.
 
 <!-- REFERENCES -->
 
 [bats]: https://github.com/bats-core/bats-core
 [bash-comp-cmd]: https://www.gnu.org/software/bash/manual/bash.html#Compound-Commands
-[bash-conditional]: https://www.gnu.org/software/bash/manual/bash.html#Conditional-Constructs
-
 [bats-docs]: https://bats-core.readthedocs.io/
 [bats-support-output]: https://github.com/bats-core/bats-support#output-formatting
 [bats-support]: https://github.com/bats-core/bats-support
