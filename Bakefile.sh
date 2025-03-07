@@ -11,6 +11,6 @@ task.test() {
 
 task.update() {
 	for repo in bats-assert bats-file bats-support; do
-		git subtree --squash -P "$repo" pull "https://github.com/hyperupcall/$repo" HEAD
+		git subtree --squash -P "$repo" pull "https://github.com/bats-core/$repo" HEAD
 	done
 }
