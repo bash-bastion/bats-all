@@ -1,5 +1,11 @@
 # Changelog
 
+## v5.3.2
+
+### Fixes
+
+- Fix typos, URLs and update changelog
+
 ## v5.3.1
 
 ### Features
