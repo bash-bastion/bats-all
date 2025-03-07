@@ -41,7 +41,3 @@ Using `git-subtree(1)`:
 ```sh
 git subtree --squash -P vendor/bats-all add https://github.com/bash-bastion/bats-all HEAD
 ```
-
-## License
-
-Original code is licensed under `CC0-1.0`. Modifications are licensed under `BSD-3-Clause`
