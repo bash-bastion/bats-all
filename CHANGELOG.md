@@ -1,5 +1,11 @@
 # Changelog
 
+## v5.3.0
+
+- Merge latest `bats-core/bats-assert` into `./bats-assert`
+- Merge latest `bats-core/bats-file` into `./bats-file`
+- Merge latest `bats-core/bats-support` into `./bats-support`
+
 ## v5.2.0
 
 ## Features
@@ -59,7 +65,7 @@ I originally created the forks because I wanted to make some changes (and upstre
 ### Features
 
 - Merge latest `bats-core/bats-assert` into `hyperupcall/bats-assert`
-  
+
 ## v4.2.0
 
 ### Features
