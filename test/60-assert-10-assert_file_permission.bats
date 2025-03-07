@@ -5,10 +5,9 @@ fixtures 'exist'
 
 setup () {
   touch ${TEST_FIXTURE_ROOT}/dir/permission
-  sudo chmod 777 ${TEST_FIXTURE_ROOT}/dir/permission
+  chmod 777 ${TEST_FIXTURE_ROOT}/dir/permission
 }
 teardown () {
-  
   rm -f ${TEST_FIXTURE_ROOT}/dir/permission
 }
 

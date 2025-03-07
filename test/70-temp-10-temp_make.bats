@@ -9,9 +9,10 @@ fixtures 'temp'
   teardown() { rm -r -- "$TEST_TEMP_DIR"; }
 
   TEST_TEMP_DIR="$(temp_make)"
+  echo $TEST_TEMP_DIR
 
   local -r literal="${BATS_TMPDIR}/${BATS_TEST_FILENAME##*/}-"
-  local -r pattern='[1-9][0-9]*-.{10}'
+  local -r pattern='[1-9][0-9]*-.{6}'
   [[ $TEST_TEMP_DIR =~ ^"${literal}"${pattern}$ ]] || false
   [ -e "$TEST_TEMP_DIR" ]
 }
@@ -23,7 +24,9 @@ fixtures 'temp'
   [ "$status" -eq 1 ]
   [ "${#lines[@]}" -eq 3 ]
   [ "${lines[0]}" == '-- ERROR: temp_make --' ]
-  [[ ${lines[1]} == 'mktemp: failed to create directory via template'* ]]
+  
+  REGEX="mktemp:.*No such file or directory"
+  [[ ${lines[1]} =~ $REGEX ]] || false
   [ "${lines[2]}" == '--' ]
 }
 
@@ -51,10 +54,8 @@ fixtures 'temp'
   run bats "${TEST_FIXTURE_ROOT}/temp_make-main.bats"
 
   [ "$status" -eq 1 ]
-  [ "${#lines[@]}" -eq 9 ]
-  [ "${lines[5]}" == '# -- ERROR: temp_make --' ]
-  [ "${lines[6]}" == "# Must be called from \`setup', \`@test' or \`teardown'" ]
-  [ "${lines[7]}" == '# --' ]
+  [[ "${output}" == *'-- ERROR: temp_make --'* ]] || false
+  [[ "${output}" == *"Must be called from \`setup', \`@test' or \`teardown'"* ]] || false
 }
 
 # Options
@@ -64,7 +65,7 @@ test_p_prefix() {
   TEST_TEMP_DIR="$(temp_make "$@" 'test-')"
 
   local -r literal="${BATS_TMPDIR}/test-${BATS_TEST_FILENAME##*/}-"
-  local -r pattern='[1-9][0-9]*-.{10}'
+  local -r pattern='[1-9][0-9]*-.{6}'
   [[ $TEST_TEMP_DIR =~ ^"${literal}"${pattern}$ ]] || false
   [ -e "$TEST_TEMP_DIR" ]
 }

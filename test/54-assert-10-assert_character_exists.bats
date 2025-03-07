@@ -4,7 +4,7 @@ load 'test_helper'
 fixtures 'exist'
 
 setup () {
- sudo mknod ${TEST_FIXTURE_ROOT}/dir/test_device c 89 1
+  bats_sudo mknod ${TEST_FIXTURE_ROOT}/dir/test_device c 89 1
 }
 teardown () {
     rm -f ${TEST_FIXTURE_ROOT}/dir/test_device
