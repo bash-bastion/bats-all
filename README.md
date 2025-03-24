@@ -30,13 +30,13 @@ You need to source this project manually (`basalt.load 'github.com/bash-bastion/
 
 ### With Git
 
-Using `git-submodules(1)`:
+Using `git-submodule`:
 
 ```sh
 git submodule add https://github.com/bash-bastion/bats-all ./vendor/bats-all
 ```
 
-Using `git-subtree(1)`:
+Using `git-subtree`:
 
 ```sh
 git subtree --squash -P vendor/bats-all add https://github.com/bash-bastion/bats-all HEAD
